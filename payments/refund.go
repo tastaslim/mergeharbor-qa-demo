@@ -18,13 +18,11 @@ type Gateway interface {
 	Refund(chargeID string, amount int64) error
 }
 
-// Refund returns amount cents of the charge through the gateway.
+// Refund returns amount cents of the charge through the gateway. Callers validate the
+// amount against the charge before calling.
 func Refund(gw Gateway, c *Charge, amount int64) error {
 	if amount <= 0 {
 		return errors.New("refund amount must be positive")
-	}
-	if amount > c.Amount-c.Refunded {
-		return ErrRefundTooLarge
 	}
 	if err := gw.Refund(c.ID, amount); err != nil {
 		return err
